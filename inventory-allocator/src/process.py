@@ -6,7 +6,7 @@ def process(order, warehouses):
 
     #format inputs to the Order and Warehouse objects
     remainingOrder = Order(order)
-    warehouses = [Warehouse(x["name"], x["inventory"]) for x in warehouses]
+    warehouses = [Warehouse(x) for x in warehouses]
 
     resultSet = []
 

@@ -1,18 +1,21 @@
 from order import Order
 
+#this class holds the name of the warehouse and a dictionary for it's inventory
 class Warehouse:
 
     #creates an Order instance from a dictionary and filters out pairs with values less than 1
-    def __init__(self, name: str, inventory: dict):
-        self.name = name
-        self.inventory = {}
-        for key, value in inventory.items():
-            if value > 0:
-                self.inventory[key] = value
+    def __init__(self, inputDict: dict):
+        self.name = inputDict["name"]
+        self.inventory = {key: value for key, value in inputDict["inventory"].items() if value > 0}
 
+    #determine equivalence by equal inventory dictionaries and equal names
+    def __eq__(self, other):
+        return self.name == other.name and self.inventory == other.inventory
+    
+    #split the inputOrder between what can and cannot be found in inventory, returns (foundOrder, notFoundOrder)
     def orderAllocate(self, inputOrder: Order) -> (Order, Order):
         foundOrder = Order()
-        leftoverOrder = Order()
+        notFoundOrder = Order()
 
         #iterate over the inputOrder key and value pairs to match against the inventory
         for inputOrderKey, inputOrderValue in inputOrder.orderItems.items():
@@ -23,12 +26,12 @@ class Warehouse:
                 #find the min of the items in inventory and the order amount to determine how many will be shipped from this warehouse
                 itemsFound = min(self.inventory[inputOrderKey], inputOrder.orderItems[inputOrderKey])
 
-                #add this min to the foundOrder and add how many of this item will still be needed to leftoverOrder
+                #add this min to the foundOrder and add how many of this item will still be needed to notFoundOrder
                 foundOrder.addItem(inputOrderKey, itemsFound)
-                leftoverOrder.addItem(inputOrderKey, inputOrder.orderItems[inputOrderKey] - itemsFound)
+                notFoundOrder.addItem(inputOrderKey, inputOrder.orderItems[inputOrderKey] - itemsFound)
 
             #if it isn't found in inventory then add it to the order that still needs to be met
             else:
-                leftoverOrder.addItem(inputOrderKey, inputOrderValue)
+                notFoundOrder.addItem(inputOrderKey, inputOrderValue)
 
-        return (foundOrder, leftoverOrder)
+        return (foundOrder, notFoundOrder)

@@ -1,18 +1,14 @@
 import unittest
-import ddt
-from parameterized import parameterized
 
 from process import process
 
 #returns true if the warehouse order list has the same warehouses to order from with the same orders, otherwise false
-
 def compareResults(actual, expected):
     if len(actual) != len(expected):
         return False
     
     if len(actual) == 0:
         return True
-        
     actual.sort(key= lambda x: list(x.keys())[0])
     expected.sort(key= lambda x: list(x.keys())[0])
     #ignore order of list, so sort based lists on warehouse name and iterate in parallel to compare
@@ -31,36 +27,54 @@ def compareResults(actual, expected):
 
 paramsList = [
     (
+        "BasicOneItemGet",
         { "apple": 1 },
         [ { "name": "owd", "inventory": { "apple": 1 } } ],
         [ { "owd": { "apple": 1 } } ]
     ),
     (
+        "BasicMissingItem",
         { "apple": 1 },
         [ { "name": "owd", "inventory": { "apple": 0 } } ],
         []
-    )
+    ),
+    (
+        "GetItemsWithMultipleWarehouses",
+        { "apple": 10 },
+        [ { "name": "owd", "inventory": { "apple": 5 } }, { "name": "dm", "inventory": { "apple": 5 } } ],
+        [ { "owd": { "apple": 5 } }, { "dm": { "apple": 5 } } ]
+    ),
+    (
+        "GetItemsFromCheaperWarehouseOnly",
+        { "apple": 4 },
+        [ { "name": "owd", "inventory": { "apple": 4 } }, { "name": "dm", "inventory": { "apple": 4 } } ],
+        [ { "owd": { "apple": 4 } } ]
+    ),
+    (
+        "EmptyOrderShouldReturnEmptyList",
+        { "apple": 0 },
+        [ { "name": "owd", "inventory": { "apple": 5 } } ],
+        [{}]
+    ),
+    (
+        "GetMultipleTypesofItemsFromWarehouses",
+        { "apple": 4, "orange": 4 },
+        [ { "name": "owd", "inventory": { "apple": 3 } }, { "name": "dm", "inventory": { "orange": 4, "apple": 1 } } ],
+        [ { "owd": { "apple": 3 } }, { "dm": { "orange": 4, "apple": 1 } } ]
+    ),
+    (
+        "SkipEmptyWarehouses",
+        { "apple": 1 },
+        [ { "name": "owd", "inventory": { "apple": 0 } }, { "name": "dm", "inventory": { "apple": 1 } } ],
+        [ { "dm": { "apple": 1 } } ]
+    ),
 ]
 
 class TestCollection(unittest.TestCase):
+    def run_tests(self):
+        for name, order, warehouses, expected in paramsList:
+            with self.subTest(msg=name):
+                self.assertTrue(compareResults(process(order, warehouses), expected))
 
-    def runTest(self):
-        for params in paramsList:
-            order, warehouses, expected = params
-            actual = process(order, warehouses)
-
-            self.assertTrue(compareResults(actual, expected))
-"""
-class TestCollection(unittest.TestCase):
-
-
-
-    def testProcessEmptyWarehouse(self):
-        print(process({"apple" : 1}, [{"name": "ben", "inventory": {"apple" : 0}}]))
-
-    def testProcessTwoWarehouses(self):
-        print(process({"apple" : 10}, [{"name": "ben", "inventory": {"apple" : 5}}, {"name": "dan", "inventory": {"apple" : 5}}]))
-    
-    def testProcessTwoWarehousesNotEnough(self):
-        print(process({"apple" : 10, "banana" : 1}, [{"name": "ben", "inventory": {"apple" : 5}}, {"name": "dan", "inventory": {"apple" : 5}}]))
-"""
+if __name__ == '__main__':
+    unittest.main()

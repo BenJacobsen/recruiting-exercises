@@ -1,19 +1,21 @@
+#this class holds a dictionary for orders and a count for the total items requested
 class Order:
 
-    orderItems = {} #make private?
-    totalItems = 0
-
-    def __init__(self, orderItems: dict):
-         #check inventory input ex. not less then 0
-        self.orderItems = orderItems
+    #creates an Order instance from a dictionary and filters out pairs with values less than 1
+    def __init__(self, orderItems={}):
+        self.orderItems = {}
+        self.totalItems = 0
         for key, value in orderItems.items():
-            self.totalItems += value
+            if value > 0:
+                self.orderItems[key] = value
+                self.totalItems += value
 
-    def addItem(itemKey: str, itemValue: int):
+    #creates a new key value pair or adds to an existing one if the itemValue is greater than one
+    def addItem(self, itemKey: str, itemValue: int):
         if itemValue < 1:
             return
-        if itemKey in orderItems:
-            orderItems[itemKey] += itemValue
+        if itemKey in self.orderItems:
+            self.orderItems[itemKey] += itemValue
         else:
-            orderItems[itemKey] = itemValue
-        totalItems += itemValue
+            self.orderItems[itemKey] = itemValue
+        self.totalItems += itemValue

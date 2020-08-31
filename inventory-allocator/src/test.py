@@ -54,7 +54,7 @@ paramsList = [
         "EmptyOrderShouldReturnEmptyList",
         { "apple": 0 },
         [ { "name": "owd", "inventory": { "apple": 5 } } ],
-        [{}]
+        []
     ),
     (
         "GetMultipleTypesofItemsFromWarehouses",
@@ -67,11 +67,11 @@ paramsList = [
         { "apple": 1 },
         [ { "name": "owd", "inventory": { "apple": 0 } }, { "name": "dm", "inventory": { "apple": 1 } } ],
         [ { "dm": { "apple": 1 } } ]
-    ),
+    )
 ]
 
 class TestCollection(unittest.TestCase):
-    def run_tests(self):
+    def test_process(self):
         for name, order, warehouses, expected in paramsList:
             with self.subTest(msg=name):
                 self.assertTrue(compareResults(process(order, warehouses), expected))

@@ -1,4 +1,22 @@
 
+## Solution
+
+For this problem I use the process() found in process.py to preform the inventory distribution. I also created the Order and Warehouse classes to internally represent the data structures passed as arguments. These classes were used to abstract away corner cases from process() (ex. recieving an empty order) and to better organize functionality by using class methods (ex. Warehouse.orderAllocate()).
+
+At a high level, process() solves this problem by iterating through the warehouses inventories starting from the least expensive and returning order items that the warehouse can supply while removing these items from the order itself. It terminates when it either runs out of order items or runs out of warehouses, returning the warehouse orders or an empty list respectively.
+
+## Testing
+
+Tests for process() can be found in test.py . Before running be sure that python3 and the unittest library is installed. 
+Run:
+`cd ../recruiting-exercises/inventory-allocator/src`
+`py test.py -v`
+
+Test cases are parameterized and stored in  `paramsList` in test.py, and each one runs as a subTest to test_process(). This means that a successful run will appear as:
+`test_process (__main__.TestCollection) ... ok`
+If an error occurs in the run it will appear as:
+`FAIL: test_process (__main__.TestCollection) [TestName]`
+where TestName is the first argument in each parameter set in paramList.  
 
 ## Problem
 

@@ -23,7 +23,7 @@ If an error occurs in the run it will appear as:
 
 `FAIL: test_process (__main__.TestCollection) [TestName]`
 
-where TestName is the first argument in each parameter set in paramList.  
+where TestName is the first argument in the failing parameter set in paramList.  
 
 ## Problem
 
